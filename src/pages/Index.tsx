@@ -340,6 +340,11 @@ const Index = () => {
           {10 - clickCount} more clicks...
         </div>
       )}
+
+      {/* Banana hint */}
+      <div className="fixed bottom-12 right-4 text-xs text-muted-foreground/40 italic">
+        psst... try typing "banana"
+      </div>
     </div>
   );
 };
