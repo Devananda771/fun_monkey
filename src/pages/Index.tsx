@@ -9,6 +9,7 @@ import DoNotClickButton from '@/components/DoNotClickButton';
 import MoreMonkeyToggle from '@/components/MoreMonkeyToggle';
 import PurposeMessage from '@/components/PurposeMessage';
 import YoureDoingGreat from '@/components/YoureDoingGreat';
+import BananaRain from '@/components/BananaRain';
 
 type MonkeyState = 'idle' | 'jumping' | 'scratching' | 'clapping' | 'yawning' | 'eating' | 'rolling' | 'staring' | 'shocked' | 'dancing' | 'waving';
 
@@ -30,6 +31,8 @@ const Index = () => {
   const [backgroundColor, setBackgroundColor] = useState(backgroundColors[0]);
   const [hasClappedForStaying, setHasClappedForStaying] = useState(false);
   const [showGoodbye, setShowGoodbye] = useState(false);
+  const [bananaRainActive, setBananaRainActive] = useState(false);
+  const [typedKeys, setTypedKeys] = useState('');
   
   const activityRef = useRef<number>(0);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -193,7 +196,31 @@ const Index = () => {
     return () => clearTimeout(timeout);
   }, [hasClappedForStaying]);
 
-  // Handle click anywhere for dance
+  // Secret banana rain easter egg
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      if (key.length === 1 && /[a-z]/.test(key)) {
+        setTypedKeys(prev => {
+          const newTyped = (prev + key).slice(-6); // Keep last 6 chars
+          if (newTyped === 'banana' && !bananaRainActive) {
+            setBananaRainActive(true);
+            setMonkeyState('dancing');
+          }
+          return newTyped;
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [bananaRainActive]);
+
+  const handleBananaRainComplete = useCallback(() => {
+    setBananaRainActive(false);
+    setTypedKeys('');
+    setMonkeyState('idle');
+  }, []);
   const handlePageClick = useCallback(() => {
     setClickCount(prev => {
       const newCount = prev + 1;
@@ -303,6 +330,9 @@ const Index = () => {
       
       <DoNotClickButton onClick={handleDoNotClick} />
       <MoreMonkeyToggle />
+
+      {/* Banana Rain Easter Egg */}
+      <BananaRain isActive={bananaRainActive} onComplete={handleBananaRainComplete} />
 
       {/* Click counter hint (hidden after dance) */}
       {clickCount > 0 && clickCount < 10 && (

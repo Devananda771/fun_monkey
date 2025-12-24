@@ -293,4 +293,19 @@ All colors MUST be HSL.
   .animate-pulse-bg {
     animation: pulse-bg 4s ease-in-out infinite;
   }
+  
+  .animate-banana-fall {
+    animation: banana-fall linear forwards;
+  }
+}
+
+@keyframes banana-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(var(--rotation, 360deg));
+    opacity: 0.8;
+  }
 }
